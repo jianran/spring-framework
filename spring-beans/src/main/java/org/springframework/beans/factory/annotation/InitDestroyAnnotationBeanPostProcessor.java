@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -217,10 +218,9 @@ public class InitDestroyAnnotationBeanPostProcessor
 	}
 
 	private LifecycleMetadata buildLifecycleMetadata(final Class<?> clazz) {
-		for (Class<? extends Annotation> annotationType : Arrays.asList(this.initAnnotationType, this.destroyAnnotationType)) {
-			if (annotationType != null && !AnnotationUtils.isCandidateClass(clazz, annotationType)) {
-				return this.emptyLifecycleMetadata;
-			}
+		if (Arrays.asList(this.initAnnotationType, this.destroyAnnotationType).stream().filter(Objects::nonNull)
+				.anyMatch(e -> !AnnotationUtils.isCandidateClass(clazz, e))) {
+			return this.emptyLifecycleMetadata;
 		}
 
 		List<LifecycleElement> initMethods = new ArrayList<>();
