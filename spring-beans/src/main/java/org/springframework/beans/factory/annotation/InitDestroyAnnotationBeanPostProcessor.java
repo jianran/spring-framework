@@ -217,8 +217,10 @@ public class InitDestroyAnnotationBeanPostProcessor
 	}
 
 	private LifecycleMetadata buildLifecycleMetadata(final Class<?> clazz) {
-		if (!AnnotationUtils.isCandidateClass(clazz, Arrays.asList(this.initAnnotationType, this.destroyAnnotationType))) {
-			return this.emptyLifecycleMetadata;
+		for (Class<? extends Annotation> annotationType : Arrays.asList(this.initAnnotationType, this.destroyAnnotationType)) {
+			if (annotationType != null && !AnnotationUtils.isCandidateClass(clazz, annotationType)) {
+				return this.emptyLifecycleMetadata;
+			}
 		}
 
 		List<LifecycleElement> initMethods = new ArrayList<>();
